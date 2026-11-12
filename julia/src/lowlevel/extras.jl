@@ -371,6 +371,30 @@ for (L, lp) in _LAYERS
                     Int(iters[]), Int(applies[]), Int(kernel[]), report[1:Int(replen[])])
         end
 
+        # The same-sector Tamm-Dancoff readout. At most `k` pairs come back and the C side checks
+        # every buffer against `k` before the solve, so `k` sizes them all. `states = true` asks
+        # for the explicit Ritz states (new handles, owned by the caller); the slots past the
+        # returned count stay NULL.
+        function _tda(::Type{$L}, h, x, k, opts::TdaOptions, seed, states::Bool)
+            n = Int(k)
+            theta = Vector{Float64}(undef, n)
+            res = Vector{Float64}(undef, n)
+            slots = fill(Ptr{Cvoid}(C_NULL), n)
+            len, reslen, slen = Ref{Csize_t}(0), Ref{Csize_t}(0), Ref{Csize_t}(0)
+            conv, cert, pre = Ref{Cint}(0), Ref{Cint}(0), Ref{Cint}(0)
+            iters, applies, dim = Ref{Csize_t}(0), Ref{Csize_t}(0), Ref{Csize_t}(0)
+            check(ccall(($(sym("tda")), libqntt), Cint,
+                        (Ptr{Cvoid}, Ptr{Cvoid}, Csize_t, Ptr{TdaOptions}, UInt64,
+                         Ptr{Float64}, Csize_t, Ptr{Csize_t}, Ptr{Float64}, Csize_t, Ptr{Csize_t},
+                         Ptr{Ptr{Cvoid}}, Csize_t, Ptr{Csize_t}, Ptr{Cint}, Ptr{Cint},
+                         Ptr{Csize_t}, Ptr{Csize_t}, Ptr{Csize_t}, Ptr{Cint}),
+                        h, x, k, Ref(opts), seed, theta, n, len, res, n, reslen,
+                        states ? slots : Ptr{Ptr{Cvoid}}(C_NULL), n, slen, conv, cert, iters,
+                        applies, dim, pre))
+            return (theta[1:Int(len[])], res[1:Int(reslen[])], slots[1:Int(slen[])], conv[] != 0,
+                    cert[] != 0, Int(iters[]), Int(applies[]), Int(dim[]), pre[])
+        end
+
         # --- cross-sector (shifted-channel) response ------------------------------------------
         # No probe pass. On `:tda` the output is at most `k` values and the per-mode (RPA-only)
         # buffers come back empty, so `k` sizes the value buffer. On `:rpa` the signed list is

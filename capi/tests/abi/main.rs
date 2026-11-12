@@ -356,3 +356,4 @@ mod pd_probe;
 mod rpa_signed_c64;
 mod sector_observables;
 mod sector_rpa;
+mod tda;

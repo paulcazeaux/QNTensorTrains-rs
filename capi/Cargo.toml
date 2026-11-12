@@ -1,6 +1,6 @@
 [package]
 name = "qntt-capi"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "C ABI for qntt (consumed by the Julia package in ../julia)"
 license = "GPL-3.0-or-later"

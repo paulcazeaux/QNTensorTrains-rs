@@ -987,6 +987,68 @@ function rpa_signed(h::Hamiltonian{ComplexF64,L}, x::TTVector{ComplexF64,L};
 end
 
 """
+    tda(H, x; k = 6, precond = :auto, seed = 1234, states = false, tol = 1e-8,
+        max_iter = 300, ...) -> (θ, info)
+
+The **same-sector Tamm–Dancoff** readout at a real reference `x`: the `k` lowest eigenpairs of the
+Hessian's effective-Hamiltonian term `A = P_T(H − λ)P_T` alone (no curvature term `B`) on the
+tangent space at `x` with the radial mode deflated, inside `x`'s own sector: its particle numbers,
+its point-group irrep and, on the SU(2) layer, its spin (a singlet reference reaches singlet
+excitations only). For another irrep use [`sector_rpa`](@ref) with `readout = :tda`.
+
+How to read `θ` (ascending, at most `k` entries):
+
+- `θ` is an **energy** in hartree **relative to `λ = ⟨x, Hx⟩`**, never `ω²`: the excited-state
+  estimate is `λ + θ` (plus `QNTT.e0(data)` for a total energy; `λ` is
+  [`rayleigh_quotient`](@ref)`(H, x)`, or the `λ` the ground-state solver returned). `λ + θⱼ` is,
+  to the solve's accuracy, the energy of the explicit state `ι(ξⱼ)` that `states = true` returns.
+- At a **critical** `x` (a converged fixed-rank ground state) the sorted list `{λ, λ + θⱼ}` bounds
+  the lowest levels of `H` in the sector from above, entry by entry (MacDonald /
+  Hylleraas–Undheim): the values are Ritz **upper bounds** from the tangent space, not exact
+  levels, unless the manifold is the whole sector. Away from criticality the bound does not hold.
+- A **negative `θ`** is a state below `x` inside its own sector and tangent span: `x` is **not**
+  the lowest state of its sector — criticality is not stability. Each negative entry carries a
+  fresh-apply certificate (`info.negatives_certified`).
+- The readout reads no inverse Schmidt values, so no curvature regularization applies (the
+  spectrum is independent of it bit for bit); at a stable minimizer the RPA `ω` of
+  [`rpa_signed`](@ref) satisfy `ωⱼ ≤ θⱼ`.
+
+`precond` ([`QNTT.TDA_PRECOND_CODES`](@ref)) is `:auto` (the default, run as `:diag` at `κ = 10`),
+`:off`, `:diag` (capped by `precond_kappa`) or `:shifted`; an unknown Symbol is an `ArgumentError`
+before the call, an integer code passes through and the C side refuses a bad one
+([`QNTTError`](@ref)). `seed` fixes the `k + 2` random tangent warm starts, so a call is
+reproducible. Every other keyword is a field of [`QNTT.TdaOptions`](@ref) — `tol` is an ABSOLUTE
+residual tolerance in hartree.
+
+`info` fields: `residuals[j]`, the fresh residual `‖Π A ξⱼ − θⱼ ξⱼ‖` of each returned pair;
+`converged` (every requested root met `tol`); `negatives_certified`; `iterations`; `applies` (every
+`A` apply, the fresh ones included); `space_dim`, the dimension solved on (`tangent_dim − 1`; at
+most that many roots exist); `precond`, the arm that RAN ([`QNTT.TDA_PRECONDS`](@ref): `:auto`
+resolved, `:off` where the `:diag` guard skipped a collapsed diagonal model); and `states`, a
+`Vector` of the unit explicit Ritz states `ι(ξⱼ)` in `x`'s space (interior bonds doubled, so rank
+`2r`; orthogonal to `x`) when `states = true`, empty otherwise. Fewer than `k` values come back
+when `k` exceeds `space_dim` or the solve stagnates (`converged = false`).
+
+```julia
+λ, x = QNTT.mals(H, x0; bond_dims = [64], eps = 1e-8)
+θ, info = QNTT.tda(H, x; k = 4, states = true)
+E = λ .+ θ .+ QNTT.e0(data)           # excited-state estimates in x's sector
+```
+"""
+function tda(h::Hamiltonian{Float64,L}, x::TTVector{Float64,L}; k::Integer = 6,
+             precond::Union{Symbol,Integer} = :auto, seed::Integer = 1234, states::Bool = false,
+             kwargs...) where {L}
+    k ≥ 0 || throw(ArgumentError("k must be non-negative, got $k"))
+    opts = setfields(defaults(TdaOptions); precond, kwargs...)
+    θ, residuals, ptrs, conv, cert, iters, applies, dim, pre =
+        _tda(L, _ptr(h), _ptr(x), Csize_t(k), opts, UInt64(seed), states)
+    vs = TTVector{Float64,L}[TTVector{Float64,L}(p) for p in ptrs]
+    return (θ, (; residuals, converged = conv, negatives_certified = cert, iterations = iters,
+                 applies, space_dim = dim, precond = get(TDA_PRECONDS, Cint(pre), :unknown),
+                 states = vs))
+end
+
+"""
     saddle_seed(H, x; eps = 1e-3, budget = 40, seed = 1234) -> (xk, λ_witness)
 
 The GAD launch point: probe the real Hessian `A + B` at `x` and kick along its softest deflated

@@ -209,6 +209,19 @@ typedef double _Complex qntt_complex;
 #define QNTT_SECTOR_PRECOND_D0   1
 #define QNTT_SECTOR_PRECOND_AUTO 2
 
+/* Preconditioner of the same-sector Tamm-Dancoff readout qntt_*_tda (QnttTdaOpts.precond). AUTO
+ * (0, so a zeroed request gets it) is the library default and resolves to DIAG at kappa = 10. OFF:
+ * plain residual corrections. DIAG: D0, the fixed theta-independent inverse of the clamped
+ * diagonal D_A of A (the effective-Hamiltonian diagonal minus lambda), its condition number
+ * capped by QnttTdaOpts.precond_kappa (<= 0 or non-finite = the auto cap 1e3). SHIFTED: the
+ * classical (D_A - theta_i)^-1 correction at each root's Ritz value. NOT the QNTT_SECTOR_PRECOND_*
+ * numbering (which puts AUTO last): different enum, different operator. Any other code is
+ * QNTT_INVALID_ARG before any work. */
+#define QNTT_TDA_PRECOND_AUTO    0
+#define QNTT_TDA_PRECOND_OFF     1
+#define QNTT_TDA_PRECOND_DIAG    2
+#define QNTT_TDA_PRECOND_SHIFTED 3
+
 /* Which route builds a channel's property covector (QnttSectorAlphaOpts.route,
  * QnttSectorMomentOpts.route). MATERIALIZED is the only route a shifted channel HAS:
  * project_hmul_env needs the property as a SparseHamiltonian on x's OWN space, which a
@@ -401,6 +414,24 @@ typedef struct {
   int32_t kernel;   /* QNTT_RPA_KERNEL_*: PAIRED (0, the default) or SIGNED; ignored by TDA */
   int32_t reserved; /* explicit, so sizeof == the sum of the field sizes; write 0 */
 } QnttSectorOpts;
+
+/* Same-sector Tamm-Dancoff readout options; see QNTT_DECLARE_TDA below. `k` and `seed` are call
+ * parameters, not fields. Eight-byte fields first, then an EVEN number of int32_t, so sizeof is
+ * the sum of the field sizes. */
+typedef struct {
+  double tol;            /* ABSOLUTE residual tolerance per root, hartree; finite and >= 0;
+                            default 1e-8 */
+  size_t max_iter;       /* outer block-Davidson iterations; default 300 */
+  size_t max_subspace;   /* thick-restart bound; 0 = auto max(8(k + 2), 32) */
+  size_t restart_keep;   /* Ritz columns kept across a restart; 0 = 2k */
+  size_t nwarm;          /* unpreconditioned warm-up iterations before DIAG / SHIFTED engage */
+  size_t max_concurrent; /* most A images computed at once; 0 = a whole batch (bounds RSS only) */
+  double precond_kappa;  /* DIAG's condition-number cap (<= 0 or non-finite = auto 1e3); ignored
+                            by the other arms; default 10, the value AUTO resolves to */
+  int32_t precond;       /* QNTT_TDA_PRECOND_*; default AUTO */
+  int32_t verbosity;     /* >= 1 prints the per-iteration line to stdout; < 0 is
+                            QNTT_INVALID_ARG; > 255 is clamped */
+} QnttTdaOpts;
 
 /* Cross-sector OBSERVABLE options; see QNTT_DECLARE_SECTOR_OBS below. TWO structs, one per entry
  * point, mirroring the library's own SectorStaticOpts / SectorMomentOpts one-to-one: no field on
@@ -677,6 +708,7 @@ int32_t qntt_lanczos_options_default(QnttLanczosOptions *out);
 int32_t qntt_riemannian_options_default(QnttRiemannianOpts *out);
 int32_t qntt_symplectic_options_default(QnttSymplecticLowestOpts *out);
 int32_t qntt_sector_options_default(QnttSectorOpts *out);
+int32_t qntt_tda_options_default(QnttTdaOpts *out);
 int32_t qntt_sector_alpha_options_default(QnttSectorAlphaOpts *out);
 int32_t qntt_sector_moment_options_default(QnttSectorMomentOpts *out);
 int32_t qntt_casscf_options_default(QnttCasscfOptions *out);
@@ -1209,6 +1241,48 @@ QNTT_DECLARE_SU2_PG(su2_c64, qntt_complex)
 
 QNTT_DECLARE_JOINT(f64)
 QNTT_DECLARE_JOINT(su2_f64)
+
+/* --- same-sector Tamm-Dancoff (TDA) readout --------------------------------------------------- */
+/* The k lowest eigenpairs of the Hessian's effective-Hamiltonian term A = P_T (H - lambda) P_T
+ * ALONE (no curvature term B) on the radial-deflated tangent space at the real state x, inside x's
+ * own sector: its particle numbers, its point-group irrep, and on su2_f64 its spin (a singlet
+ * reference reaches singlet excitations only). f64 layers.
+ *
+ * Reading the numbers:
+ *  - theta is an ENERGY in hartree relative to lambda = <x, Hx>, never omega^2: the excited-state
+ *    estimate is lambda + theta (+ the integrals' core energy). lambda + theta_j is, to the
+ *    solve's accuracy, the energy of the explicit state iota(xi_j) out_states returns.
+ *  - at a CRITICAL x the sorted list {lambda, lambda + theta_j} bounds the lowest levels of H in
+ *    the sector from above (MacDonald); away from criticality it does not.
+ *  - theta < 0 is a state below x in its own sector and tangent span: x is not the lowest state
+ *    there (criticality is not stability); each carries a fresh-apply certificate, summarized by
+ *    out_negatives_certified.
+ *  - no curvature pair: A reads no Schmidt inverse, so the spectrum is independent of any
+ *    curvature regularization bit for bit.
+ * The k + 2 warm starts are seed-determined random tangent directions at x's ranks (the
+ * qntt_*_rpa_signed seeding). Buffers are checked against k BEFORE the solve (at most k pairs come
+ * back, fewer on a clamped or short return): out_theta is REQUIRED with cap >= k; out_residual
+ * (nullable, res_cap >= k) is each pair's FRESH residual |Pi A xi - theta xi|; out_states
+ * (nullable, states_cap >= k handle slots) receives the unit explicit states iota(xi_j) in x's
+ * space (interior bonds doubled), new handles freed with qntt_*_vec_free, slots past the returned
+ * count set to NULL, written LAST; out_states_len is the number of handles written (0 when
+ * out_states is NULL -- the conversion is then skipped). out_converged: every requested root met
+ * tol; out_iters, out_applies (every A apply, fresh ones included); out_space_dim the dimension
+ * solved on (tangent_dim - 1); out_precond the QNTT_TDA_PRECOND_* arm that RAN (AUTO resolved;
+ * OFF where the DIAG guard skipped a collapsed diagonal model). opts is required; an unknown
+ * precond code, a negative or non-finite tol, a negative verbosity or a short buffer is
+ * QNTT_INVALID_ARG before any work. */
+#define QNTT_DECLARE_TDA(SFX)                                                                     \
+  int32_t qntt_##SFX##_tda(const void *h, const void *x, size_t k, const QnttTdaOpts *opts,       \
+                           uint64_t seed, double *out_theta, size_t cap, size_t *out_len,         \
+                           double *out_residual, size_t res_cap, size_t *out_res_len,             \
+                           void **out_states, size_t states_cap, size_t *out_states_len,          \
+                           int32_t *out_converged, int32_t *out_negatives_certified,              \
+                           size_t *out_iters, size_t *out_applies, size_t *out_space_dim,         \
+                           int32_t *out_precond);
+
+QNTT_DECLARE_TDA(f64)
+QNTT_DECLARE_TDA(su2_f64)
 
 /* --- signed RPA on the C64 layers ---------------------------------------------------------- */
 /* The signed omega^2 of the REALIFIED C64 pencil at x (symplectic_lowest_signed_davidson_c64) by

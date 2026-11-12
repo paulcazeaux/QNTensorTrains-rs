@@ -363,6 +363,56 @@ end
     @test occursin("indefinite point", err.msg) && occursin("rpa_signed", err.msg)
 end
 
+@testset "same-sector Tamm-Dancoff (tda)" begin
+    # H4 at rank cap 2 on both layers: a capped critical point, so θ is a tangent-space Ritz
+    # spectrum, not FCI. The exact statement available is ⟨ι(ξ), H ι(ξ)⟩ = λ + ⟨ξ, Aξ⟩, which the
+    # returned states must carry: E(sⱼ) = λ + θⱼ, ‖sⱼ‖ = 1, ⟨x, sⱼ⟩ = 0.
+    data = QNTT.read_fcidump(h4())
+    for (s, layer) in ((QNTT.QnSpace(data), "abelian"), (QNTT.Su2Space(data), "su2"))
+        H = QNTT.Hamiltonian(s, data)
+        x0 = QNTT.tt_randn(s, QNTT.uniform_ranks(s, 2); seed = 7)
+        λ, x = QNTT.als(H, x0; eps = 1e-10, max_iter = 50)
+        θ, info = QNTT.tda(H, x; k = 3, seed = 11, states = true)
+        @test length(θ) == 3
+        @test issorted(θ)
+        @test info.converged
+        @test info.negatives_certified
+        @test info.precond === :diag                      # :auto runs as :diag
+        @test all(r -> r ≤ 1e-7, info.residuals)
+        @test info.applies ≥ info.iterations
+        @test info.space_dim ≥ 3
+        λx = QNTT.rayleigh_quotient(H, x)
+        @test length(info.states) == 3
+        for (j, sj) in enumerate(info.states)
+            @test norm(sj) ≈ 1 atol = 1e-12
+            @test abs(dot(x, sj)) < 1e-8
+            @test QNTT.rayleigh_quotient(H, sj) ≈ λx + θ[j] atol = 1e-8
+        end
+        # Same seed ⇒ the same solve; without states nothing is converted.
+        θ2, info2 = QNTT.tda(H, x; k = 3, seed = 11)
+        @test θ2 == θ && isempty(info2.states)
+        # Explicit arms echo themselves and agree to the tolerance.
+        θo, io = QNTT.tda(H, x; k = 3, seed = 11, precond = :off)
+        @test io.precond === :off && io.converged
+        @test θo ≈ θ atol = 1e-7
+        # Caller errors: an unknown Symbol before the call, a bad integer code and a negative
+        # tol on the C side.
+        @test_throws ArgumentError QNTT.tda(H, x; k = 3, precond = :bogus)
+        err = try
+            QNTT.tda(H, x; k = 3, precond = 9)
+            nothing
+        catch e
+            e
+        end
+        @test err isa QNTTError && err.code == 2 && occursin("TDA precond 9", err.msg)
+        @test_throws QNTTError QNTT.tda(H, x; k = 3, tol = -1.0)
+    end
+    d = QNTT.defaults(QNTT.TdaOptions)
+    @test d.tol == 1e-8 && d.max_iter == 300 && d.precond == QNTT.TDA_PRECOND_CODES[:auto]
+    @test d.precond_kappa == 10.0
+    @test QNTT.setfields(d; precond = :shifted).precond == QNTT.TDA_PRECOND_CODES[:shifted]
+end
+
 @testset "cross-sector response" begin
     # The `d = 4` order-4 table [A, B, C, B] at (Nup, Ndn) = (2, 1), Γ0 = 0 — the smallest
     # point-group fixture with a live shifted channel. `orbsym` goes in as 1-based Molpro ids, so
@@ -1621,6 +1671,9 @@ end
     end
     for sfx in ("f64", "su2_f64")
         union!(declared, instantiate(macro_body("QNTT_DECLARE_JOINT(SFX)"), ["SFX" => sfx]))
+    end
+    for sfx in ("f64", "su2_f64")
+        union!(declared, instantiate(macro_body("QNTT_DECLARE_TDA(SFX)"), ["SFX" => sfx]))
     end
     # The cross-sector family is f64-only today; the SU(2) instantiation is a later phase's, and
     # listing it here before the symbol exists would fail this very check.

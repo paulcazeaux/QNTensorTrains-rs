@@ -848,7 +848,7 @@ dependencies = [
 
 [[package]]
 name = "qntt"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "faer",
  "num-bigint",
@@ -868,7 +868,7 @@ dependencies = [
 
 [[package]]
 name = "qntt-capi"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "num-complex",
  "paste",

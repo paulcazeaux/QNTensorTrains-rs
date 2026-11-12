@@ -15,7 +15,7 @@ use qntt::solvers::als::AlsOptions;
 use qntt::solvers::excited::ExcitedInfo;
 use qntt::solvers::hess::{
     CurvatureReg, RpaKernel, RpaMetric, SectorMomentOpts, SectorOpts, SectorReadout,
-    SectorStaticOpts, SympPrecond, SymplecticDavidsonOpts,
+    SectorStaticOpts, SympPrecond, SymplecticDavidsonOpts, TdaDavidsonOpts, TdaPrecond,
 };
 use qntt::solvers::joint::PropRoute;
 use qntt::solvers::lanczos::LanczosOptions;
@@ -438,6 +438,131 @@ fn curvature_reg_code(reg: CurvatureReg) -> (c_int, f64) {
         CurvatureReg::Off => (QNTT_CURVATURE_REG_OFF, 0.0),
         CurvatureReg::Hard(v) => (QNTT_CURVATURE_REG_HARD, v),
         CurvatureReg::Tikhonov(v) => (QNTT_CURVATURE_REG_TIKHONOV, v),
+    }
+}
+
+/// Wire code for [`TdaPrecond::Auto`] (`QnttTdaOpts::precond`): the library default, which
+/// resolves to `DIAG` at `kappa = 10` ([`TdaPrecond::resolve`]). Zero, so a zero-initialized
+/// request gets the default.
+pub const QNTT_TDA_PRECOND_AUTO: c_int = 0;
+/// Wire code for [`TdaPrecond::Off`]: plain residual corrections.
+pub const QNTT_TDA_PRECOND_OFF: c_int = 1;
+/// Wire code for [`TdaPrecond::Diag`] (D0): the fixed, θ-independent inverse of the clamped
+/// `D_A`; `QnttTdaOpts::precond_kappa` caps its condition number (`<= 0` or non-finite = the auto
+/// cap `1e3`).
+pub const QNTT_TDA_PRECOND_DIAG: c_int = 2;
+/// Wire code for [`TdaPrecond::Shifted`]: the θ-shifted Davidson correction `(D_A − θᵢ)⁻¹`.
+pub const QNTT_TDA_PRECOND_SHIFTED: c_int = 3;
+
+/// The `QNTT_TDA_PRECOND_*` code of a [`TdaPrecond`] — the `out_precond` echo of `qntt_*_tda`.
+/// The echoed value is the RESOLVED arm (`TdaInfo::precond`), never `Auto` on a run; an arm this
+/// table does not know (the enum is non-exhaustive) is `-1`.
+pub fn tda_precond_code(p: TdaPrecond) -> c_int {
+    match p {
+        TdaPrecond::Auto => QNTT_TDA_PRECOND_AUTO,
+        TdaPrecond::Off => QNTT_TDA_PRECOND_OFF,
+        TdaPrecond::Diag { .. } => QNTT_TDA_PRECOND_DIAG,
+        TdaPrecond::Shifted => QNTT_TDA_PRECOND_SHIFTED,
+        _ => -1,
+    }
+}
+
+/// Mirror of [`TdaDavidsonOpts`] — the in-sector Tamm–Dancoff readout `qntt_*_tda`.
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct QnttTdaOpts {
+    /// [`TdaDavidsonOpts::tol`]: ABSOLUTE residual tolerance per root, in hartree. Finite and
+    /// `>= 0`, else `QNTT_INVALID_ARG`.
+    pub tol: f64,
+    /// [`TdaDavidsonOpts::max_iter`]: outer block-Davidson iterations.
+    pub max_iter: usize,
+    /// [`TdaDavidsonOpts::max_subspace`]: thick-restart bound, `0` = the auto
+    /// `max(8·(k + 2), 32)`.
+    pub max_subspace: usize,
+    /// [`TdaDavidsonOpts::restart_keep`]: Ritz columns kept across a restart, `0` = `2k`.
+    pub restart_keep: usize,
+    /// [`TdaDavidsonOpts::nwarm`]: unpreconditioned warm-up iterations.
+    pub nwarm: usize,
+    /// [`TdaDavidsonOpts::max_concurrent`]: most `A` images computed at once, `0` = a whole batch.
+    pub max_concurrent: usize,
+    /// The condition-number cap of `QNTT_TDA_PRECOND_DIAG` (`<= 0` or non-finite = the auto cap
+    /// `1e3`); every other arm ignores it. Default `10`, the value `AUTO` resolves to.
+    pub precond_kappa: f64,
+    /// `QNTT_TDA_PRECOND_*`; an unknown code is `QNTT_INVALID_ARG`.
+    pub precond: c_int,
+    /// [`TdaDavidsonOpts::verbosity`]: `>= 1` prints the per-iteration line to stdout. Negative is
+    /// `QNTT_INVALID_ARG`; values above 255 are clamped.
+    pub verbosity: c_int,
+}
+
+impl QnttTdaOpts {
+    /// Decode onto [`TdaDavidsonOpts`], refusing every value the library would panic on (a
+    /// negative or non-finite `tol`) and every unknown code with [`crate::err::QNTT_INVALID_ARG`]
+    /// — a caller error, decoded before any handle is borrowed. `precond_kappa` is never refused:
+    /// under `DIAG` a value `<= 0` or non-finite (NaN included) decodes to `kappa = 0.0`, the
+    /// library's own auto spelling, so NaN and `0` give the same bits.
+    pub fn to_core(self) -> Result<TdaDavidsonOpts, Error> {
+        let precond = match self.precond {
+            QNTT_TDA_PRECOND_AUTO => TdaPrecond::Auto,
+            QNTT_TDA_PRECOND_OFF => TdaPrecond::Off,
+            QNTT_TDA_PRECOND_DIAG => TdaPrecond::Diag {
+                kappa: if self.precond_kappa.is_finite() && self.precond_kappa > 0.0 {
+                    self.precond_kappa
+                } else {
+                    0.0
+                },
+            },
+            QNTT_TDA_PRECOND_SHIFTED => TdaPrecond::Shifted,
+            c => {
+                return Err(Error::invalid(format!(
+                    "TDA precond {c} (want 0 = auto (the library default: diag at kappa 10), \
+                     1 = off, 2 = diag (D0, capped by precond_kappa), 3 = shifted); note this is \
+                     NOT the QNTT_SECTOR_PRECOND_* numbering, which puts auto last"
+                )));
+            }
+        };
+        if !(self.tol.is_finite() && self.tol >= 0.0) {
+            return Err(Error::invalid(format!(
+                "TDA tol {} (an absolute residual tolerance in hartree: finite and >= 0)",
+                self.tol
+            )));
+        }
+        if self.verbosity < 0 {
+            return Err(Error::invalid(format!(
+                "TDA verbosity {} (want >= 0)",
+                self.verbosity
+            )));
+        }
+        Ok(TdaDavidsonOpts {
+            tol: self.tol,
+            max_iter: self.max_iter,
+            max_subspace: self.max_subspace,
+            restart_keep: self.restart_keep,
+            nwarm: self.nwarm,
+            precond,
+            max_concurrent: self.max_concurrent,
+            verbosity: self.verbosity.min(c_int::from(u8::MAX)) as u8,
+        })
+    }
+
+    /// The library defaults ([`TdaDavidsonOpts::default`]); `precond_kappa = 10`, the cap `AUTO`
+    /// resolves to, so switching the code to `DIAG` alone reproduces the default arm.
+    pub fn defaults() -> Self {
+        let d = TdaDavidsonOpts::default();
+        QnttTdaOpts {
+            tol: d.tol,
+            max_iter: d.max_iter,
+            max_subspace: d.max_subspace,
+            restart_keep: d.restart_keep,
+            nwarm: d.nwarm,
+            max_concurrent: d.max_concurrent,
+            precond_kappa: match TdaPrecond::Auto.resolve() {
+                TdaPrecond::Diag { kappa } => kappa,
+                _ => 10.0,
+            },
+            precond: tda_precond_code(d.precond),
+            verbosity: c_int::from(d.verbosity),
+        }
     }
 }
 

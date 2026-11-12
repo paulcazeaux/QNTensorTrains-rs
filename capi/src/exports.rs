@@ -1376,6 +1376,20 @@ pub unsafe extern "C" fn qntt_sector_options_default(out: *mut QnttSectorOpts) -
     })
 }
 
+/// Fill `out` with the in-sector Tamm–Dancoff readout's (`qntt_*_tda`) keyword defaults: the
+/// library's [`TdaDavidsonOpts`](qntt::solvers::hess::TdaDavidsonOpts) with
+/// `precond = QNTT_TDA_PRECOND_AUTO` and `precond_kappa = 10`, the cap `AUTO` resolves to.
+///
+/// # Safety
+/// `out` must be writable.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn qntt_tda_options_default(out: *mut QnttTdaOpts) -> c_int {
+    catch(|| {
+        unsafe { *crate::err::ptr_mut(out, "out")? = QnttTdaOpts::defaults() };
+        Ok(())
+    })
+}
+
 /// Fill `out` with the keyword defaults of `qntt_*_sector_alpha`: [`SectorStaticOpts`](qntt::solvers::hess::SectorStaticOpts)' own
 /// `tol`/`max_iter`/`tt_grad_tol`, `has_sym_assert_rel = 0` (so the library recomputes `100·tol`
 /// from the `tol` actually passed) and `QNTT_PROP_ROUTE_MATERIALIZED`, the only route a channel

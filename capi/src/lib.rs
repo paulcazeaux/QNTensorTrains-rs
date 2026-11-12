@@ -24,6 +24,7 @@ pub mod pointgroup;
 pub mod probe;
 pub mod rpa;
 pub mod su2_pointgroup;
+pub mod tda;
 pub mod types;
 
 use std::os::raw::{c_char, c_int};

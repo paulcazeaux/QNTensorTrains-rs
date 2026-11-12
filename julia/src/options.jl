@@ -95,6 +95,29 @@ struct SectorOptions
     reserved::Cint  # explicit C padding; stays 0
 end
 
+"""The knobs of the same-sector Tamm–Dancoff readout; see [`tda`](@ref). Mirrors the library's
+`TdaDavidsonOpts` one-to-one; `k` and `seed` are call parameters, not fields. `tol` is an ABSOLUTE
+residual tolerance per root, in hartree (finite, `≥ 0`; default `1e-8`); `max_iter` counts outer
+block-Davidson iterations (default 300); `max_subspace` is the thick-restart bound (`0` = the auto
+`max(8(k + 2), 32)`); `restart_keep` the Ritz columns kept across a restart (`0` = `2k`); `nwarm`
+the unpreconditioned warm-up iterations; `max_concurrent` the most `A` images computed at once
+(`0` = a whole batch; it bounds memory only, the values do not depend on it). `precond` is a wire
+code — pass it as the Symbol [`QNTT.TDA_PRECOND_CODES`](@ref) names (default `:auto`, which runs as
+`:diag` at `κ = 10`); `precond_kappa` caps `:diag`'s condition number (`≤ 0` or non-finite = the
+auto cap `1e3`; default `10`, the value `:auto` resolves to) and the other arms ignore it.
+`verbosity ≥ 1` prints the per-iteration line to stdout."""
+struct TdaOptions
+    tol::Float64
+    max_iter::Csize_t
+    max_subspace::Csize_t
+    restart_keep::Csize_t
+    nwarm::Csize_t
+    max_concurrent::Csize_t
+    precond_kappa::Float64
+    precond::Cint       # TDA_PRECOND_CODES
+    verbosity::Cint
+end
+
 """The exposed knobs of `qntt_f64_sector_alpha`; see [`sector_alpha`](@ref). Mirrors the
 library's own `SectorStaticOpts` one-to-one, so no field is inert on the entry point that receives
 it — [`SectorMomentOptions`](@ref) is the other half. `sym_assert_rel` is honoured only when
@@ -388,6 +411,7 @@ for (S, fn) in ((:AlsOptions, :qntt_als_options_default),
                 (:LanczosOptions, :qntt_lanczos_options_default),
                 (:SymplecticOptions, :qntt_symplectic_options_default),
                 (:SectorOptions, :qntt_sector_options_default),
+                (:TdaOptions, :qntt_tda_options_default),
                 (:SectorAlphaOptions, :qntt_sector_alpha_options_default),
                 (:SectorMomentOptions, :qntt_sector_moment_options_default),
                 (:CasscfOptions, :qntt_casscf_options_default),
@@ -462,6 +486,21 @@ capped by `precond_kappa` (`≤ 0` or non-finite = the auto cap `1e3`); `:auto` 
 default, which is `:off` until a measured table promotes `:d0`."""
 const SECTOR_PRECOND_CODES = Dict(:off => Cint(0), :d0 => Cint(1), :auto => Cint(2))
 
+"""The preconditioner of [`tda`](@ref), keyed by keyword — the C `QNTT_TDA_PRECOND_*` codes.
+`:auto` (the default) runs as `:diag` at `κ = 10`; `:off` is plain residual corrections; `:diag` is
+D0, the fixed θ-independent inverse of the clamped diagonal `D_A` of `A` (the effective-Hamiltonian
+diagonal minus `λ`), its condition number capped by `precond_kappa`; `:shifted` the classical
+`(D_A − θᵢ)⁻¹` correction at each root's Ritz value. **Not** the numbering of
+[`QNTT.SECTOR_PRECOND_CODES`](@ref) (which puts `:auto` last): a different enum over a different
+operator. The inverse map is `QNTT.TDA_PRECONDS`."""
+const TDA_PRECOND_CODES = Dict(:auto => Cint(0), :off => Cint(1), :diag => Cint(2),
+                               :shifted => Cint(3))
+
+"""The preconditioner a [`tda`](@ref) solve RAN, keyed by wire code (`info.precond`): `:auto`
+resolved (to `:diag`), and `:off` where the `:diag` guard skipped a collapsed diagonal model. The
+inverse of [`QNTT.TDA_PRECOND_CODES`](@ref)."""
+const TDA_PRECONDS = Dict(v => k for (k, v) in TDA_PRECOND_CODES)
+
 """The TRI-state [`sector_rpa_dense`](@ref) reads out of the C `out_stable`, keyed by wire code.
 `:stable` = both Hessian blocks PD, every `ω² > 0`; `:resonant` = exactly one block PD, the signed
 `ω²` is real and a negative entry is a resonance `ω = i√|ω²|` — physics, not a failure;
@@ -486,6 +525,8 @@ const _ENUMS = Dict(
     :readout => Dict(k => Int(v) for (k, v) in SECTOR_READOUTS),
     :metric => Dict(k => Int(v) for (k, v) in RPA_METRIC_CODES),
     :route => Dict(k => Int(v) for (k, v) in PROP_ROUTES),
+    # `TdaOptions.precond` — the only options field named `precond`.
+    :precond => Dict(k => Int(v) for (k, v) in TDA_PRECOND_CODES),
 )
 
 function _enum_code(name::Symbol, v::Symbol)

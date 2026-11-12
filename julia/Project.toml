@@ -1,6 +1,6 @@
 name = "QNTT"
 uuid = "3f5d9ba1-6c47-4e0b-9a3d-1f2c8b7e4a60"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Paul Cazeaux"]
 license = "GPL-3.0-or-later"
 

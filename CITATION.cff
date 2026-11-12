@@ -21,8 +21,8 @@ abstract: >-
   spin-adapted), abelian point-group symmetry on both, an ALS/MALS/TDVP/Riemannian solver
   stack, excited states, and linear response (RPA/TDA) including joint orbital-TT response,
   with a C ABI and Julia bindings.
-version: 0.1.0
-date-released: '2026-11-11'
+version: 0.1.1
+date-released: '2026-11-12'
 license: GPL-3.0-or-later
 repository-code: https://github.com/paulcazeaux/QNTensorTrains-rs
 keywords:
@@ -35,6 +35,6 @@ keywords:
   - SU(2) symmetry
   - point-group symmetry
   - Rust
-# TODO: add the Zenodo DOI once a snapshot is deposited, e.g.
-#   doi: 10.5281/zenodo.XXXXXXX
-# and add `preferred-citation:` pointing at the methods paper once it is out.
+# The concept DOI: it resolves to the latest archived version.
+doi: 10.5281/zenodo.24167856
+# TODO: add `preferred-citation:` pointing at the methods paper once it is out.

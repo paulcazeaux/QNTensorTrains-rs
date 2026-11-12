@@ -1969,6 +1969,23 @@ fn the_header_and_the_rust_structs_agree_on_layout() {
     );
     check_layout(
         hdr,
+        "QnttTdaOpts",
+        size_of::<QnttTdaOpts>(),
+        align_of::<QnttTdaOpts>(),
+        &[
+            ("tol", offset_of!(QnttTdaOpts, tol)),
+            ("max_iter", offset_of!(QnttTdaOpts, max_iter)),
+            ("max_subspace", offset_of!(QnttTdaOpts, max_subspace)),
+            ("restart_keep", offset_of!(QnttTdaOpts, restart_keep)),
+            ("nwarm", offset_of!(QnttTdaOpts, nwarm)),
+            ("max_concurrent", offset_of!(QnttTdaOpts, max_concurrent)),
+            ("precond_kappa", offset_of!(QnttTdaOpts, precond_kappa)),
+            ("precond", offset_of!(QnttTdaOpts, precond)),
+            ("verbosity", offset_of!(QnttTdaOpts, verbosity)),
+        ],
+    );
+    check_layout(
+        hdr,
         "QnttSectorAlphaOpts",
         size_of::<QnttSectorAlphaOpts>(),
         align_of::<QnttSectorAlphaOpts>(),

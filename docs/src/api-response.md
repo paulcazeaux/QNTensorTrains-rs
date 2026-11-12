@@ -12,6 +12,7 @@ The option structs and wire-code tables these entry points take are on the [main
 QNTT.rpa
 QNTT.rpa_dense
 QNTT.rpa_signed
+QNTT.tda
 QNTT.sector_rpa
 QNTT.sector_rpa_dense
 QNTT.sector_alpha
