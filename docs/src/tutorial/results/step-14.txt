@@ -1,0 +1,41 @@
+# capture capped-default
+== SU(2) TT-CASSCF linear response — h2o_631g_cas
+d = 13, N = 10, 2S = 0, CAS(8 e⁻, 6 orb), core/active/virt = 1/6/6, non-redundant pairs = 48
+
+★ The ladder below is its OWN curve. `m_active` caps REDUCED MULTIPLET ranks — it is NOT an abelian pooled `m`, and the two layers' truncated ladders are not comparable objects. Only the full rung is cross-layer comparable.
+★ A `*` after `m_active` marks a rung the SCF stopped at the √ε line-search floor (converged + stalled_at_floor): its ω carry a first-order-in-‖g_kept‖ bias, so read `|g_kept|` beside them. Not a refusal — a diagnosis endpoint.
+
+m_active   tan_dim   modes        lambda+e0    |g_kept|   n_eff     omega_1    alpha_xx    alpha_zz
+      1*        32      79    -76.015091843     2.17e-6      48    0.329266    9.997776    4.166495
+      2*        70     117    -76.034647087     1.89e-6      48    0.319485    7.517236    5.177571
+      3*        96     143    -76.039557092     5.61e-6      48    0.313377    7.707219    5.030583
+   full*       105     152    -76.039557119     5.54e-6      48    0.313274    7.707232    5.030588
+
+-- full rank: the 8 lowest singlet excitations (iso_defect = 9.99e-16, orth_error = 6.88e-13)
+   n        omega        |T_x|        |T_y|        |T_z|            f
+   0     0.313274    1.171e-14     2.105e-1    1.135e-14    9.2512e-3
+   1     0.388773    2.437e-14    1.010e-11    1.492e-14   2.6456e-23
+   2     0.412951    1.816e-11    1.089e-15     6.881e-1    1.3034e-1
+   3     0.492897     6.818e-1    1.037e-15    3.930e-12    1.5275e-1
+   4     0.549441      1.110e0    1.406e-15    2.241e-12    4.5157e-1
+   5     0.681980    1.701e-11    4.819e-16     7.860e-1    2.8090e-1
+   6     1.059512    2.810e-15    1.837e-10    8.165e-15   2.3825e-20
+   7     1.092350    1.707e-14     3.446e-1    1.462e-15    8.6483e-2
+
+α(0) diagonal = (7.707231547, 1.327016911, 5.030587856)   SOS − solve = (1.18e-12, -3.02e-13, -1.15e-13)
+λ + e0 = -76.039557118528   fixture casscf_gs = -76.039557117417   Δ = -1.11e-9
+
+== ★ Ŝ²-resolved labelling of the abelian spectrum (the abelian twin at the same orbitals)
+su2 152 modes ⊂ abelian 272 modes; residue 120 non-singlet (S ≥ 1). ★ An INCLUSION, never an equality — and only at full active rank.
+
+   n omega(abelian)      S label
+   0     0.313274      SINGLET
+   1     0.388773      SINGLET
+   2     0.412951      SINGLET
+   3     0.492897      SINGLET
+   4     0.549441      SINGLET
+   5     0.573869  non-singlet
+   6     0.589661  non-singlet
+   7     0.643614  non-singlet
+
+α is layer-independent (the dipole is spin-free ⇒ non-singlet moments vanish): max relative Δ over the diagonal = 4.43e-8

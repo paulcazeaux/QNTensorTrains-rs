@@ -1,0 +1,83 @@
+# capture release-0.1
+Cone-augmented molecular response — arms: tangent-only CI / Williamson, cone
+k∈[4, 8, 16] at M∈[2, 3], exact configuration-enumeration reference with spin labels
+
+================================================================================
+== testdata/lih_sto3g: d=6 spatial orbitals, N=4 — sector (2,2) ==
+exact reference: dim 225 (+ partner 120), 1.9s; E0 = -8.877719570
+
+-- abelian M=2: E(M) = -8.877679049 (E(M)−E0 = 4.05e-5), ‖grad‖ = 8.0e-13, 1.9s
+   cone k=4 : added 4 in 1 rounds, E0^CI−E0 = +1.13e-8, gs r/t/c=0.999988/2.1e-6/1.0e-5, guards iso 1e-15 / ortho 1e-15, 0.9s
+   cone k=8 : added 8 in 2 rounds, E0^CI−E0 = +1.12e-13, gs r/t/c=0.999988/2.1e-6/1.0e-5, guards iso 1e-15 / ortho 1e-15, 1.1s
+   cone k=16: added 16 in 5 rounds, E0^CI−E0 = +1.17e-13, gs r/t/c=0.999988/2.1e-6/1.0e-5, guards iso 1e-15 / ortho 1e-15, 1.9s
+     j  S      exact         tangent-CI          tangent-W                   cone k=4                   cone k=8                  cone k=16
+     1 T+    0.11598     0.11601 (3e-5)     0.11600 (2e-5)     0.11598 (1e-6) c=0.00     0.11598 (9e-14) c=0.00     0.11598 (5e-14) c=0.00 
+     2  S    0.13319     0.13333 (1e-4)     0.13321 (2e-5)     0.13319 (2e-6) c=0.00     0.13319 (2e-14) c=0.00     0.13319 (4e-15) c=0.00 
+     3 T+    0.16595     0.39987 (2e-1)     0.39987 (2e-1)     0.39980 (2e-1) c=0.00      0.39979 (2e-1) c=0.00      0.16610 (2e-4) c=0.95*
+     4 T+    0.16595     0.56388 (4e-1)     0.56253 (4e-1)     0.56391 (4e-1) c=0.00      0.56391 (4e-1) c=0.00      0.16610 (2e-4) c=0.95*
+     5  S    0.18545     0.57687 (4e-1)     0.57687 (4e-1)     0.57691 (4e-1) c=0.00      0.56944 (4e-1) c=0.01      0.39979 (2e-1) c=0.00 
+     6  S    0.18545     0.57696 (4e-1)     0.57696 (4e-1)     0.57700 (4e-1) c=0.00      0.56952 (4e-1) c=0.01      0.56391 (4e-1) c=0.00 
+   legend: c = the state's CONE fraction of the mixed basis; * = c > 0.5 (descriptive, never gated)
+
+-- abelian M=3: E(M) = -8.877718252 (E(M)−E0 = 1.32e-6), ‖grad‖ = 6.1e-13, 1.2s
+   cone k=4 : added 4 in 1 rounds, E0^CI−E0 = +1.14e-13, gs r/t/c=0.999999/5.3e-9/5.3e-7, guards iso 9e-16 / ortho 3e-13, 1.1s
+   cone k=8 : added 8 in 3 rounds, E0^CI−E0 = +1.12e-13, gs r/t/c=0.999999/5.3e-9/5.3e-7, guards iso 9e-16 / ortho 3e-13, 1.6s
+   cone k=16: added 16 in 7 rounds, E0^CI−E0 = +1.28e-13, gs r/t/c=0.999999/5.3e-9/5.3e-7, guards iso 9e-16 / ortho 3e-13, 2.2s
+     j  S      exact         tangent-CI          tangent-W                   cone k=4                   cone k=8                  cone k=16
+     1 T+    0.11598     0.11603 (5e-5)     0.11603 (4e-5)    0.11598 (4e-14) c=0.00     0.11598 (7e-14) c=0.00     0.11598 (1e-14) c=0.00 
+     2  S    0.13319     0.13324 (5e-5)     0.13324 (5e-5)    0.13319 (8e-14) c=0.00     0.13319 (6e-14) c=0.00     0.13319 (4e-15) c=0.00 
+     3 T+    0.16595     0.39984 (2e-1)     0.39983 (2e-1)     0.39979 (2e-1) c=0.00      0.17806 (1e-2) c=0.94*     0.16595 (1e-7) c=0.95*
+     4 T+    0.16595     0.56391 (4e-1)     0.56391 (4e-1)     0.56391 (4e-1) c=0.00      0.17838 (1e-2) c=0.94*     0.16595 (1e-7) c=0.95*
+     5  S    0.18545     0.57688 (4e-1)     0.57688 (4e-1)     0.57029 (4e-1) c=0.01      0.39979 (2e-1) c=0.00      0.39979 (2e-1) c=0.00 
+     6  S    0.18545     0.57698 (4e-1)     0.57698 (4e-1)     0.57032 (4e-1) c=0.01      0.56391 (4e-1) c=0.00      0.56391 (4e-1) c=0.00 
+   legend: c = the state's CONE fraction of the mixed basis; * = c > 0.5 (descriptive, never gated)
+
+-- abelian M=4 (rank spent on the REFERENCE instead), tangent-CI gap errors:
+    j=1: 7e-14 j=2: 5e-14 j=3: 2e-1 j=4: 4e-1 j=5: 4e-1 j=6: 4e-1
+
+-- SU(2) M=3 (reduced multiplet ranks): E = -8.877527956 (E−E0 = 1.92e-4), ‖grad‖ = 8.9e-13, 1.8s
+   cone k=4  (4 added, gs r/t/c=0.999957/5.7e-7/4.2e-5, 0.2s): singlet gaps  0.13326(7e-5) c=0.00 0.56420(4e-1) c=0.00 0.66069(5e-1) c=0.00 0.67066(1e-1) c=0.00 0.68078(2e-2) c=0.00 0.68078(1e-2) c=0.00  worst 4.8e-1
+   cone k=8  (8 added, gs r/t/c=0.999951/6.9e-7/4.8e-5, 0.2s): singlet gaps  0.13317(1e-5) c=0.00 0.56419(4e-1) c=0.00 0.66069(5e-1) c=0.00 0.66553(1e-1) c=0.01 0.66553(5e-3) c=0.01 0.66774(6e-4) c=0.00  worst 4.8e-1
+   cone k=16 (16 added, gs r/t/c=0.999945/6.5e-7/5.4e-5, 0.4s): singlet gaps  0.13318(8e-6) c=0.00 0.20117(2e-2) c=0.91 0.20117(2e-2) c=0.91 0.56391(5e-6) c=0.00 0.66054(9e-7) c=0.00 0.66719(2e-5) c=0.00  worst 1.6e-2
+   (cross-layer: errors above are vs the ABELIAN exact singlet-labeled levels)
+[testdata/lih_sto3g total 30.6s]
+
+================================================================================
+== testdata/h2o_sto3g: d=7 spatial orbitals, N=10 — sector (5,5) ==
+exact reference: dim 441 (+ partner 245), 12.1s; E0 = -83.821320365
+
+-- abelian M=2: E(M) = -83.816534554 (E(M)−E0 = 4.79e-3), ‖grad‖ = 7.5e-12, 4.4s
+   cone k=4 : added 4 in 1 rounds, E0^CI−E0 = +1.57e-3, gs r/t/c=0.998833/4.6e-5/1.1e-3, guards iso 1e-15 / ortho 2e-15, 3.3s
+   cone k=8 : added 8 in 2 rounds, E0^CI−E0 = +1.57e-3, gs r/t/c=0.998833/4.6e-5/1.1e-3, guards iso 1e-15 / ortho 2e-15, 3.9s
+   cone k=16: added 16 in 3 rounds, E0^CI−E0 = +1.57e-3, gs r/t/c=0.998833/4.6e-5/1.1e-3, guards iso 1e-15 / ortho 2e-15, 5.4s
+     j  S      exact         tangent-CI          tangent-W                   cone k=4                   cone k=8                  cone k=16
+     1 T+    0.35754     0.36121 (4e-3)     0.36121 (4e-3)     0.36081 (3e-3) c=0.00      0.35803 (5e-4) c=0.00      0.35740 (1e-4) c=0.00 
+     2  S    0.41369     0.42769 (1e-2)     0.42769 (1e-2)     0.41500 (1e-3) c=0.01      0.41500 (1e-3) c=0.01      0.41270 (1e-3) c=0.01 
+     3 T+    0.45673     0.45813 (1e-3)     0.45783 (1e-3)     0.45987 (3e-3) c=0.00      0.45987 (3e-3) c=0.00      0.45615 (6e-4) c=0.01 
+     4 T+    0.45813     0.46402 (6e-3)     0.46402 (6e-3)     0.46724 (9e-3) c=0.00      0.46075 (3e-3) c=0.00      0.45801 (1e-4) c=0.00 
+     5  S    0.49341     0.50776 (1e-2)     0.50776 (1e-2)     0.51098 (2e-2) c=0.00      0.49655 (3e-3) c=0.01      0.49295 (5e-4) c=0.01 
+     6 T+    0.53085     0.53640 (6e-3)     0.53560 (5e-3)     0.53961 (9e-3) c=0.00      0.53514 (4e-3) c=0.00      0.53155 (7e-4) c=0.00 
+   legend: c = the state's CONE fraction of the mixed basis; * = c > 0.5 (descriptive, never gated)
+
+-- abelian M=3: E(M) = -83.820901949 (E(M)−E0 = 4.18e-4), ‖grad‖ = 6.7e-12, 3.1s
+   cone k=4 : added 4 in 1 rounds, E0^CI−E0 = +2.49e-4, gs r/t/c=0.999957/1.3e-6/4.2e-5, guards iso 1e-15 / ortho 4e-13, 4.9s
+   cone k=8 : added 8 in 2 rounds, E0^CI−E0 = +2.49e-4, gs r/t/c=0.999957/1.3e-6/4.2e-5, guards iso 1e-15 / ortho 4e-13, 6.1s
+   cone k=16: added 16 in 3 rounds, E0^CI−E0 = +2.49e-4, gs r/t/c=0.999957/1.3e-6/4.2e-5, guards iso 1e-15 / ortho 4e-13, 8.3s
+     j  S      exact         tangent-CI          tangent-W                   cone k=4                   cone k=8                  cone k=16
+     1 T+    0.35754     0.36310 (6e-3)     0.36310 (6e-3)     0.36191 (4e-3) c=0.00      0.35989 (2e-3) c=0.00      0.35891 (1e-3) c=0.00 
+     2  S    0.41369     0.41590 (2e-3)     0.41590 (2e-3)     0.41498 (1e-3) c=0.00      0.41498 (1e-3) c=0.00      0.41359 (1e-4) c=0.00 
+     3 T+    0.45673     0.46173 (5e-3)     0.46163 (5e-3)     0.45869 (2e-3) c=0.00      0.45869 (2e-3) c=0.00      0.45708 (4e-4) c=0.00 
+     4 T+    0.45813     0.46366 (6e-3)     0.46366 (6e-3)     0.46382 (6e-3) c=0.00      0.46159 (3e-3) c=0.00      0.45800 (1e-4) c=0.00 
+     5  S    0.49341     0.49474 (1e-3)     0.49474 (1e-3)     0.49491 (1e-3) c=0.00      0.49414 (7e-4) c=0.00      0.49343 (2e-5) c=0.00 
+     6 T+    0.53085     0.53142 (6e-4)     0.53104 (2e-4)     0.53159 (7e-4) c=0.00      0.53121 (4e-4) c=0.00      0.53114 (3e-4) c=0.00 
+   legend: c = the state's CONE fraction of the mixed basis; * = c > 0.5 (descriptive, never gated)
+
+-- abelian M=4 (rank spent on the REFERENCE instead), tangent-CI gap errors:
+    j=1: 1e-3 j=2: 2e-3 j=3: 1e-3 j=4: 4e-6 j=5: 1e-3 j=6: 2e-4
+
+-- SU(2) M=3 (reduced multiplet ranks): E = -83.804713059 (E−E0 = 1.66e-2), ‖grad‖ = 6.7e-12, 2.7s
+   cone k=4  (4 added, gs r/t/c=0.995066/4.1e-5/4.9e-3, 0.3s): singlet gaps  1.24261(8e-1) c=0.02 1.26971(8e-1) c=0.02 1.28789(7e-1) c=0.01 1.44379(8e-1) c=0.00 1.49481(7e-1) c=0.00 1.55282(6e-1) c=0.00  worst 8.3e-1
+   cone k=8  (8 added, gs r/t/c=0.993836/8.5e-5/6.1e-3, 0.4s): singlet gaps  1.23366(8e-1) c=0.03 1.27002(8e-1) c=0.02 1.28906(7e-1) c=0.01 1.40599(8e-1) c=0.02 1.45544(7e-1) c=0.03 1.52968(6e-1) c=0.01  worst 8.2e-1
+   cone k=16 (16 added, gs r/t/c=0.993737/7.2e-5/6.2e-3, 0.8s): singlet gaps  1.17977(8e-1) c=0.25 1.23638(7e-1) c=0.03 1.26457(7e-1) c=0.05 1.35865(7e-1) c=0.09 1.35967(6e-1) c=0.11 1.43345(5e-1) c=0.08  worst 7.7e-1
+   (cross-layer: errors above are vs the ABELIAN exact singlet-labeled levels)
+[testdata/h2o_sto3g total 110.6s]

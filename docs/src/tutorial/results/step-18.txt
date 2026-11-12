@@ -1,0 +1,65 @@
+# capture release-0.1
+== cross-sector response — lih_sto3g (d=6, N=4, sector (2,2), C2v of order 4, target irrep 0) ==
+reference: lambda = -8.877710643 Ha (electronic), ||P_T grad|| = 7.613e-13, ||r_perp|| = 5.963e-3, sigma_min = 8.137e-4, pooled bond dims [1, 4, 8, 7, 7, 4, 1], 2.45 s
+  e_core = 0.995317638 Ha; every energy below is ELECTRONIC unless the column says otherwise.
+
+-- channels (5.28 s total, 2 operator build(s)) --
+ phi target  dim T^phi sector dets dim/dets ||B||/||A||              how   status                                   s
+---------------------------------------------------------------------------------------------------------------------
+   1 A2           0      44   0.000 —                        —     Empty                                 0.00
+   2 B1          10      56   0.179 1.395e-15                gram  Ok                                    1.42
+   3 B2           8      56   0.143 1.390e-15                gram  Ok                                    0.86
+  `dim T^phi` is a STRUCTURAL count over the rank grids, not the size of the target sector: the shifted space borrows the reference's suffix bases at the relabelled sectors, so where dim/dets < 1 the values below are Ritz values of H|_target − lambda compressed to T^phi — upper bounds by Cauchy interlacing, not that sector's levels.
+  A2 is EMPTY (dim T^phi = 0) over a sector of 44 determinants — the flux is unreachable from THIS reference's grid, a property of the group and the grid rather than a defect, and no operator was built for it.
+
+-- readouts per live channel (k = 2) --
+target    dim   j theta = eig(A)   lambda + theta  signed omega^2 omega (published) applies t/r
+-----------------------------------------------------------------------------------------------
+A2      SKIPPED: dim T^phi = 0
+B1         10   0     0.57651672     -8.301193925      0.33237153 0.57651672     28/10
+           10   1     0.67817779     -8.199532850      0.45992512 0.67817779
+B2          8   0     0.57661911     -8.301091538      0.33248959 0.57661911     8/8
+            8   1     0.67827063     -8.199440009      0.46005105 0.67827063
+  B1: max |theta^2 - omega^2| = 1.332e-15, ||B||/||A|| = 1.395e-15 (gram) — the RPA readout has COLLAPSED onto the TDA one, and ||r_perp|| above is NOT small, so this is the structural reason: the channel varies a single core slot
+  B2: max |theta^2 - omega^2| = 1.943e-15, ||B||/||A|| = 1.390e-15 (gram) — the RPA readout has COLLAPSED onto the TDA one, and ||r_perp|| above is NOT small, so this is the structural reason: the channel varies a single core slot
+
+in-sector (phi = 0, tangent_dim 39): omega = [0.116170748, 0.133418832, 0.399478322, 0.563872524]
+cross-sector TDA levels, ascending (channel-labelled):
+      -7.305876287 Ha total   gap  0.576516718   B1 (root 0)
+      -7.305773900 Ha total   gap  0.576619105   B2 (root 0)
+      -7.204215212 Ha total   gap  0.678177793   B1 (root 1)
+      -7.204122371 Ha total   gap  0.678270634   B2 (root 1)
+
+-- relaxed-reference gaps from `channel_response` (11.94 s) — a DIFFERENT object --
+target    E_gs (relaxed)    gap vs ref  lowest theta status
+-----------------------------------------------------------
+A1          -8.877710643   0.000000000             — Ok
+A2          -8.244706742   0.633003901             — Ok
+B1          -8.711734942   0.165975701   0.576516718 Ok
+B2          -8.711734942   0.165975701   0.576619105 Ok
+  the `lowest theta` column is THIS step's linearization at the one typed reference; the `gap` column re-converged a ground state in each irrep. They answer different questions, and an irrep that `channel_response` inhabits can still be an EMPTY shifted channel here — the shifted tangent space is a subspace of the target sector, never the whole of it.
+
+-- SYNTHETIC observables per live channel (3 symmetry-typed component(s), one per flux; NOT this molecule's dipole) --
+target    dim component     alpha^phi   max|T_n| at n        f_n ΣT²/||p||²   capture complete. status
+---------------------------------------------------------------------------------------------------------
+A2      SKIPPED: dim T^phi = 0
+B1         10 mu[flux 2]     3.396e-1   3.179e-1    1   4.570e-2   1.000000   9.61e-1  8.83e-18 Ok
+B2          8 mu[flux 3]     3.393e-1   3.182e-1    1   4.578e-2   1.000000   9.61e-1  7.38e-18 Ok
+  alpha^phi is the channel's static polarizability of its OWN component — every other component's row and column are structural zeros, so the channel blocks add up into one tensor (alpha_total below). max|T_n| is the BRIGHTEST mode's moment, at mode n (0-based, ascending omega), f_n its oscillator strength; on LiH the LOWEST mode of both channels is dark to this operator (|T_0| ~ 1e-16, an exact zero by symmetry rather than a small number — this step does not resolve which symmetry). ΣT²/||p||² is the operator sum rule: exactly 1 where B^phi ≡ 0 (both live LiH channels are single-slot), a ratio of either side of 1 on a curved channel (h2o_sto3g's B1), reported and never asserted. `capture` is the fraction of mu x the channel's borrowed-suffix tangent space MISSED — O(1) on a proper-subspace channel, read it against dim/dets above — and `complete.` what the channel basis missed of the covector.
+  SYNTHETIC alpha_total diagonal (Σ over channels; the in-sector A-flux block is NOT included — that is the in-sector problem's): ["0.000000e0", "3.395589e-1", "3.393097e-1"]
+  Σ_channels Σ_n f_n = 1.486131e-1 — NOT Thomas–Reiche–Kuhn (synthetic operator, incomplete basis, in-sector channel excluded): a diagnostic, never an oracle.
+
+-- dense cross-check --
+target    dim verdict   dense vs iter note
+------------------------------------------
+B1         10 stable      2.554e-15 10 dense values, 2 iterative
+  untyped oracle B1 [A]: n = 10, scale 3.217e0, worst |eig difference| 1.332e-15
+  untyped oracle B1 [A+B]: n = 10, scale 3.217e0, worst |eig difference| 2.220e-15
+  untyped oracle B1 [A-B]: n = 10, scale 3.217e0, worst |eig difference| 1.332e-15
+B2          8 stable      1.499e-15 8 dense values, 2 iterative
+  the dense driver is one Hessian-class apply pair per tangent direction — an oracle, not a production path. Its verdict is the three-way Williamson routing; the iterative readout carries signed omega^2 plus witnesses only.
+
+dimension identity: sum_phi dim T^phi + tangent_dim(x) = 57 vs tangent_dim(forget_point_group(x)) = 57
+SUMMARY step-18 fixture=lih_sto3g rank=8 k=2 readout=both lambda=-8.877710643 gradnorm=7.613e-13 sigma_min=8.137e-4 built=2 dim_total=57 untyped_dim=57 f_total_synthetic=1.486e-1 dense_dev=2.554e-15 oracle_dev=6.902e-16
+
+ACCEPTANCE lih_sto3g rank 8: PASS (criterion: the dimension identity holds exactly, and every algebraic cross-check that ran agrees to 1e-8 relative)

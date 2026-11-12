@@ -1,0 +1,15 @@
+# k8/meta.txt -- written by qntt::integrals::write_fixture_dir; keyed dialect.
+norb            6
+nelec           4
+ms2             0
+isym            1
+e_nuc           9.95317638094044e-1
+write_tol       0
+dump_file       LIH_ROT.FCIDUMP
+dump_bytes      7759
+dump_lines      257
+parent_fixture  lih_sto3g
+derived_by      examples/fixture/tr_legacy_endpoint.rs
+recipe          tjt_t20 legacy: seed 44 rank-2 grid, TrKrylov, GNorm/Full/Raw, tr_init 1e-2, orb_grad 1e-6, tt_grad_tol 1e-6, Median construction; integrals ROTATED by the accumulated u, so the saved x.tt is the point at u = I
+orb_iters       8
+generated_on_arch x86_64

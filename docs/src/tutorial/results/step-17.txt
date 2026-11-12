@@ -1,0 +1,40 @@
+# capture release-0.1
+== excited-state ladder — lih_sto3g (d=6, N↑=2 N↓=2, rank cap 0, nroots 3) ==
+HF -7.862023860 Ha, FCI reference -7.882401932 Ha (meta); every table below is TOTAL energy (electronic + e_core = 0.995317638)
+dense oracle:  225 determinants in (2,2), E[0..3] = [-8.877719570384329, -8.76173611320165, -8.74453382460122]
+               105 of them are S = 0 levels, s0[0..3] = [-8.877719570384329, -8.74453382460122, -8.692269625852175]
+abelian RPA:   56 basis vectors, 56 applies, converged=true
+
+abelian: ladder energies (Ha, total = electronic + e_core)
+  root     E (state avg)    E (state spec)      E (polished)  penalty w   ‖grad J‖   passes   conv
+     0      -7.882401932      -7.882401932      -7.882401932     0.00e0   7.99e-13        0    yes
+     1      -7.766418475      -7.766418475      -7.766418475     1.16e0   7.88e-13        0    yes
+     2      -7.749216187      -7.749216187      -7.749216187     1.33e0   7.63e-13        0    yes
+
+abelian: gaps to root 0 (Ha) against the dense reference spectrum
+    j ref lvl        gap (SA)        gap (SS)       gap (pol)         ω (RPA)     gap (dense) pol − dense
+    1       1     0.115983457     0.115983457     0.115983457     0.115983457     0.115983457  -5.684e-14
+    2       2     0.133185746     0.133185746     0.133185746     0.133185746     0.133185746   1.119e-13
+abelian: the ω column is the RPA spectrum in ASCENDING order at root 0's manifold, so when the ladder skips a level the two columns stop lining up row for row.
+abelian: licence=true converged=[true, true, true] swaps=0 swapped=[] overlap_dev=2.427e-14 passes=[0, 0, 0] enriched=true
+abelian: state-average stage — 9 sweeps, max bond rank 23, 392 local applies
+su2 RPA:       44 basis vectors, 44 applies, converged=true
+
+su2: ladder energies (Ha, total = electronic + e_core)
+  root     E (state avg)    E (state spec)      E (polished)  penalty w   ‖grad J‖   passes   conv
+     0      -7.882401932      -7.882401932      -7.882401932     0.00e0   4.96e-13        0    yes
+     1      -7.749216187      -7.749216187      -7.749216187     1.33e0   5.03e-13        0    yes
+     2      -7.318494520      -7.318494520      -7.318494520     5.64e0   6.36e-13        0    yes
+
+su2: gaps to root 0 (Ha) against the dense reference spectrum
+    j ref lvl        gap (SA)        gap (SS)       gap (pol)         ω (RPA)     gap (dense) pol − dense
+    1       1     0.133185746     0.133185746     0.133185746     0.133185746     0.133185746   1.084e-13
+    2       4     0.563907413     0.563907413     0.563907413     0.563907413     0.563907413  -4.974e-14
+su2: the ω column is the RPA spectrum in ASCENDING order at root 0's manifold, so when the ladder skips a level the two columns stop lining up row for row.
+su2: licence=true converged=[true, true, true] swaps=0 swapped=[] overlap_dev=1.686e-14 passes=[0, 0, 0] enriched=true
+su2: state-average stage — 9 sweeps, max bond rank 16, 376 local applies
+su2: the ladder reached S = 0 levels [0, 1, 4] (distance to them 1.705e-13); against the levels 0..2 in order the deviation is 3.785e-1.
+su2: the aufbau CSF start SKIPPED at least one S = 0 level — the completeness caveat (a degenerate pair carries no weight in the shared state-average basis and H cannot repopulate it). REPORTED, not an error: `licence` never certifies completeness. Remedies: one more root, or a start that already carries that symmetry.
+SUMMARY step-17 fixture=lih_sto3g rank=0 nroots=3 layer=both ab_gap_dev_sa=1.030e-13 ab_gap_dev_ss=1.048e-13 ab_gap_dev_pol=1.119e-13 ab_omega_dev=1.166e-13 ab_licence=true su2_subset_dev=1.705e-13 su2_singlet_dev=3.785e-1 su2_licence=true
+
+ACCEPTANCE lih_sto3g rank 0: PASS (criterion: every SA/SS/polish/RPA gap within 1e-8 of the dense gap and every licence true)

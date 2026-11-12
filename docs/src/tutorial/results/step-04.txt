@@ -1,0 +1,32 @@
+# capture release-0.1
+== metrics_construction | testdata/lih_sto3g/LIH.FCIDUMP | norb=6 nelec=4 ms2=0 | R=4 ==
+CONSTRUCTION=Bipartite
+W_CHANNEL=off
+M5_CONSTRUCTION_WALL 0.004s  (peak RSS: wrap with /usr/bin/time -l)
+bond | channels | sectors | max/sector | flux-blocks | max-block | M3 ranksum (R=4)
+   0 |        1 |       1 |          1 |           1 |         1 |          1
+   1 |       25 |       4 |          9 |          16 |         4 |         25
+   2 |      214 |       9 |         42 |          61 |        10 |        446
+   3 |      186 |       9 |         36 |          49 |         8 |        550
+   4 |      160 |       9 |         30 |          49 |         6 |        332
+   5 |       27 |       4 |          9 |          16 |         4 |         27
+   6 |        1 |       1 |          1 |           1 |         1 |          1
+M1_BOND_DIM max=214 mean=87.7  profile=[1, 25, 214, 186, 160, 27, 1]
+M2_COO_NNZ total=4334  per_site=[25, 507, 2588, 742, 443, 29]
+M3_RANKSUM_R4 max=550  profile=[1, 25, 446, 550, 332, 27, 1]
+FLUX_BLOCK_HISTOGRAM (class size 2^i..2^(i+1) -> #blocks over all bonds/sectors)
+       1..2      : 37
+       2..4      : 56
+       4..8      : 94
+       8..16     : 6
+TOP_FLUX_BLOCKS (size | bond | sector | flux) — the largest cover subproblems
+      10 | b= 2 | (1,1) | (+0,+0)
+       8 | b= 2 | (1,2) | (+0,+0)
+       8 | b= 2 | (2,1) | (+0,+0)
+       8 | b= 3 | (0,1) | (+0,+0)
+       8 | b= 3 | (1,0) | (+0,+0)
+       8 | b= 3 | (1,1) | (+0,+0)
+       6 | b= 4 | (0,1) | (+0,+0)
+       6 | b= 4 | (1,0) | (+0,+0)
+       6 | b= 4 | (1,1) | (+0,+0)
+       5 | b= 2 | (0,1) | (+0,+0)

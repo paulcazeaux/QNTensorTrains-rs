@@ -1,0 +1,7 @@
+# capture release-0.1
+== qntt als | testdata/lih_sto3g/LIH.FCIDUMP | norb=6 nelec=4 ms2=0 | R=20 sweeps=3 threads=32 ==
+AUTOMATON_BOND_DIM max=214 mean=87.7  profile=[1, 25, 214, 186, 160, 27, 1]
+H build 5.122 ms | max total bond rank M=29 | λ0=-1896.373094 (e0=0.995318)
+PURE_MATVEC 0.5945ms/apply  (mid-site k=3, 20 reps, M=29, sink 2.208e3) — vs Block2 Tdav/Ndav
+SWEEP_TIME_TOTAL 0.2027s  PER_SWEEP 0.0676s  (3 sweeps)  λ=-8.877720  M=29
+LOCAL_APPLIES 158  PER_APPLY 1.2826ms  (time per local H·x matvec — the fair cross-code metric)

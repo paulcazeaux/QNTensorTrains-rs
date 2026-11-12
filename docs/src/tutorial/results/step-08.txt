@@ -1,0 +1,31 @@
+# capture release-0.1
+== RPA/linear-response ω on the fixed-rank TT manifold — lih_sto3g ==
+d=6 (spatial orbitals), N↑=2 N↓=2, manifold rank cap 2, k=6
+warm start:    E(x0) = -7.742631071 Ha, per-bond max sector ranks [1, 1, 2, 2, 2, 1, 1]
+ALS:           E = -7.882361410 Ha, ranks [1, 1, 2, 2, 2, 1, 1]
+polish:        9 CG iterations, exit Gradient, ‖grad‖ = 5.358e-13; certified minimizer (A+B PD, λ_min 0.11595, A−B PD (λ_min 0.11605))
+re-polish:     0 CG iterations, exit Gradient, ‖grad‖ = 5.648e-13; certified minimizer (A+B PD, λ_min 0.11595, A−B PD (λ_min 0.11605))
+trimmed grid:  per-bond max sector ranks [1, 1, 2, 2, 2, 1, 1] (dropped σ < 1e-8 rel.)
+ground state:  E = -7.882361410 Ha  (HF -7.862023860, FCI -7.882401932; corr. captured 99.8%)
+               ‖grad‖ = 5.648e-13, converged in 14.10s
+‖r⊥‖ = 1.271e-2  (truncated manifold ⇒ Weingarten term B live)
+  bond 1: Schmidt σ ∈ [4.263e-3, 1.000e0], dropped mass 0.0e0
+  bond 2: Schmidt σ ∈ [1.393e-4, 9.871e-1], dropped mass 0.0e0
+  bond 3: Schmidt σ ∈ [3.791e-4, 9.892e-1], dropped mass 0.0e0
+  bond 4: Schmidt σ ∈ [2.596e-4, 9.896e-1], dropped mass 0.0e0
+  bond 5: Schmidt σ ∈ [5.953e-2, 9.900e-1], dropped mass 0.0e0
+iterative ω:   5.46s — 71 basis vectors, 71 applies (paired kernel), converged=true
+dense oracle:  5.99s — tangent dim n=71, 71 A- + 71 B-applies + n² Grams + Williamson
+FCI check:     1.50s — 225 determinants, E_0 = -7.882401932 Ha (meta: -7.882401932)
+
+lowest 6 excitation estimates (Hartree / eV):
+    j   ω (iterative)      ω (eV)       ω (dense)   FCI E_j − E_0
+    0      0.11600146      3.1566      0.11600146      0.11598346
+    1      0.13320608      3.6247      0.13320608      0.13318575
+    2      0.39986901     10.8810      0.39986901      0.16594792
+    3      0.56253227     15.3073      0.56253227      0.16594792
+    4      0.57687020     15.6974      0.57687020      0.18544994
+    5      0.57695848     15.6998      0.57695848      0.18544994
+max |ω_iter − ω_dense|/ω over the reported k: 7.647e-14
+
+NOTE: ω are fixed-rank linear-response estimates; they differ from the FCI gaps by the manifold truncation (the FCI column repeats degenerate gaps the manifold may not contain). Increase [rank] to watch ω approach E_j − E_0.

@@ -1,0 +1,8 @@
+# capture release-0.1
+== step-01 | fixture=lih_sto3g | d=6 | nelec=4 | Nup=2 | Ndn=2 ==
+Hamiltonian built in     5.629 ms
+HF determinant     E = -7.8620238601   (meta e_hf = -7.8620238601, gap -5.3e-15)
+random start       E = -2.4848396697   per-sector rank cap 64 (full rank: the train is exact)
+ALS (40 sweeps max) E = -7.8824019323   in   219.410 ms
+FCI (meta)         E = -7.8824019323   ΔE = -1.776e-15   ‖Hx − λx‖ = 2.93e-7
+SUMMARY step-01 fixture=lih_sto3g R=64 full_rank=true E=-7.8824019323 E_fci=-7.8824019323 dE=-1.776e-15 residual=2.93e-7 als_ms=219.410

@@ -1,0 +1,38 @@
+# capture release-0.1
+== SU(2) singlet RPA/linear-response ω on the fixed-rank TT manifold — lih_sto3g ==
+d=6 (spatial orbitals), N=4 (singlet twoS=0), manifold rank cap 4, k=6
+MALS mode: fixed bond-dim cap ramp to M=4
+MALS iter 0 forward sweep: energy = -8.870403963001268
+MALS iter 0 back sweep: energy = -8.87759932341722, relative improvement = 0.002281903525722377, discarded weight = 5.041e-6, M = 6, noise = 3.0e-3
+MALS iter 1 forward sweep: energy = -8.877715584015343
+MALS iter 1 back sweep: energy = -8.877716871590126, relative improvement = 0.000013240811191200172, discarded weight = 1.869e-7, M = 10, noise = 1.0e-3
+MALS iter 2 forward sweep: energy = -8.877719383810478
+MALS iter 2 back sweep: energy = -8.87771920640718, relative improvement = 0.0000002629973983268435, discarded weight = 2.870e-9, M = 14, noise = 3.0e-4
+MALS iter 3 forward sweep: energy = -8.87765976693445
+MALS iter 3 back sweep: energy = -8.877656402025242, relative improvement = 0.000007074432608620877, discarded weight = 1.237e-5, M = 4, noise = 1.0e-4
+MALS iter 4 forward sweep: energy = -8.877659931293843
+MALS iter 4 back sweep: energy = -8.877656302567575, relative improvement = 0.000000011203144568941925, discarded weight = 1.061e-5, M = 4, noise = 3.0e-5
+MALS iter 5 forward sweep: energy = -8.877659954516202
+MALS iter 5 back sweep: energy = -8.87765636627621, relative improvement = 0.0000000071762897980709335, discarded weight = 1.061e-5, M = 4, noise = 1.0e-5
+MALS iter 6 forward sweep: energy = -8.877659955366596
+MALS iter 6 back sweep: energy = -8.877656361040847, relative improvement = 0.000000000589723475761801, discarded weight = 1.061e-5, M = 4, noise = 3.0e-6
+MALS iter 7 forward sweep: energy = -8.877659953903827
+MALS iter 7 back sweep: energy = -8.877656359615107, relative improvement = 0.00000000016059863872690406, discarded weight = 1.061e-5, M = 4, noise = 1.0e-6
+MALS iter 8 forward sweep: energy = -8.87765995476015
+MALS iter 8 back sweep: energy = -8.877656359408338, relative improvement = 0.000000000023291024578113878, discarded weight = 1.061e-5, M = 4, noise = 0.0e0
+MALS:          E = -7.882338721 Ha, per-bond max sector ranks [1, 1, 2, 2, 2, 1, 1]
+ground state:  E = -7.882344578 Ha  (HF -7.862023860, ref -7.882401932; corr. captured 99.7%)
+               ‖grad‖ = 5.996e-13, ranks [1, 1, 2, 2, 2, 1, 1], converged in 2.28s
+‖r⊥‖ = 1.467e-2
+iterative ω:   1.19s — 21 basis vectors, 21 applies (paired kernel), converged=true
+dense oracle:  1.16s — tangent dim n=21
+
+lowest 6 SINGLET excitation estimates:
+    j   ω (iterative)      ω (eV)       ω (dense)
+    0      0.13343344      3.6309      0.13343344
+    1      0.56319721     15.3254      0.56319721
+    2      0.66025224     17.9664      0.66025224
+    3      0.66790714     18.1747      0.66790714
+    4      0.67829289     18.4573      0.67829289
+    5      0.67829289     18.4573      0.67829289
+max |ω_iter − ω_dense|/ω over the reported k: 4.368e-15

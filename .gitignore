@@ -1,0 +1,30 @@
+# Build artifacts
+/target
+
+# Julia resolves its own manifest per machine; the Project.toml files are tracked.
+/julia/Manifest.toml
+/docs/Manifest.toml
+/notebooks/Manifest.toml
+
+# Documentation build output
+/docs/build/
+
+# Jupyter scratch
+.ipynb_checkpoints/
+
+# OS / editor detritus
+.DS_Store
+*.log
+*.tmp
+*.bak
+
+# Notebook-local state cache, generated on first execution
+notebooks/cache/
+
+# Python bytecode from the testdata generators
+__pycache__/
+*.pyc
+
+# Regenerable dense oracle of the complex-saddle fixture
+/testdata/complex_saddle/*.bin
+/testdata/complex_saddle/spectrum_*.txt

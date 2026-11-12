@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+title: >-
+  qntt: quantum-number-preserving block-sparse tensor trains
+  for fermionic many-body systems
+message: >-
+  If qntt contributes to work you publish, please cite it using the metadata below.
+  A methods paper is in preparation and will replace this software citation as the
+  preferred reference once it appears.
+type: software
+authors:
+  - family-names: Cazeaux
+    given-names: Paul
+    email: cazeaux@vt.edu
+    affiliation: Virginia Tech
+abstract: >-
+  qntt implements matrix-product-state / tensor-train methods for electronic structure
+  and fermionic lattice problems. Spin-up and spin-down electron counts, or on the
+  spin-adapted layer the total spin, are held exactly as block-sparse quantum numbers on
+  every tensor core rather than enforced by penalty or recovered by projection.
+  The library provides two symmetry layers (abelian Nup/Ndn-conserving and SU(2)
+  spin-adapted), abelian point-group symmetry on both, an ALS/MALS/TDVP/Riemannian solver
+  stack, excited states, and linear response (RPA/TDA) including joint orbital-TT response,
+  with a C ABI and Julia bindings.
+version: 0.1.0
+date-released: '2026-11-11'
+license: GPL-3.0-or-later
+repository-code: https://github.com/paulcazeaux/QNTensorTrains-rs
+keywords:
+  - tensor train
+  - matrix product state
+  - DMRG
+  - electronic structure
+  - quantum chemistry
+  - spin adaptation
+  - SU(2) symmetry
+  - point-group symmetry
+  - Rust
+# TODO: add the Zenodo DOI once a snapshot is deposited, e.g.
+#   doi: 10.5281/zenodo.XXXXXXX
+# and add `preferred-citation:` pointing at the methods paper once it is out.

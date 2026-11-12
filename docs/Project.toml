@@ -1,0 +1,9 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+QNTT = "3f5d9ba1-6c47-4e0b-9a3d-1f2c8b7e4a60"
+
+[sources]
+QNTT = {path = "../julia"}
+
+[compat]
+Documenter = "1"

@@ -1,0 +1,13 @@
+[package]
+name = "qntt-exkit"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+publish = false
+
+[dependencies]
+qntt = { path = "..", default-features = false }
+rand = "0.10.2"
+rand_xoshiro = "0.8.1"
+libc = "0.2"
+

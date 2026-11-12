@@ -1,0 +1,22 @@
+# capture release-0.1
+== N2/cc-pVDZ (REAL integrals) diagnostics — mode=matvec ==
+load integrals                   59.096 ms  (d=28, nelec=14)
+CONSTRUCTION=Bipartite
+SparseHamiltonian::new         9710.205 ms
+RayleighQuotient(H,HF)           50.400 ms  = -132.0844109291  (+e_nuc=-108.94937788, e_hf=-108.94937788)
+  ✓ energy check passed (matches the reference energy to 1e-6)
+
+controlled state: per-sector rank R=24
+build+orthogonalize state        75.320 ms
+  per-sector block ranks: 1240 nonzero sectors, mean 19.9, max 24
+    =1          84  ( 6.8%)
+    2-4         42  ( 3.4%)
+    5-16       144  (11.6%)
+    17-63      970  (78.2%)
+    64-127       0  ( 0.0%)
+    128+         0  ( 0.0%)
+    Σrank³ fraction in ≥64 blocks: 0.0%
+
+env sweep right_to_left        7715.185 ms  (d-1 environment steps, threaded)
+round(x) SERIAL                 211.018 ms   [1240 sectors]
+als 1 sweep                   76609.950 ms  λ=-132.385546

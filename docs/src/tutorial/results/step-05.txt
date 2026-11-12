@@ -1,0 +1,6 @@
+# capture release-0.1
+d=28 nelec=14 ms2=0  E_hf(tt)=-108.94937788 (ref -108.94937788)  E_ref=-109.28030507
+
+canonical, HF determinant, 20 sweeps, % of E_corr (max total bond rank in []):
+  M=64    noise-free  34.88%   random  88.77% [64]   perturbative  88.44% [64]
+  M=128   noise-free  34.88%   random  94.24% [128]   perturbative  94.16% [128]

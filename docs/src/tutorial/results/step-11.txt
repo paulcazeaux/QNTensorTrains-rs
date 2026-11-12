@@ -1,0 +1,48 @@
+# capture release-0.1
+
+================================================================================
+== testdata/lih_sto3g: d=6, N=4 — sector (2,2), group C2v (order 4), target irrep 0
+== per-channel composition: mcap 0 (uncapped), cone k=16, targets=4, spin channels 0
+
+-- channels (10.7s total) --
+channel        sector      E_gs + E_core     ‖grad‖    E_0^CI + E_core    gs c  status
+A1              (2,2)       -7.882401932    4.5e-13       -7.882401932   0.0e0  Ok
+A2              (2,2)       -7.249389104    7.6e-13       -7.249389104 9.5e-29  Ok
+B1              (2,2)       -7.716454011    4.1e-13       -7.716454011 1.9e-29  Ok
+B2              (2,2)       -7.716454011    3.3e-13       -7.716454011 2.7e-30  Ok
+
+-- merged spectrum (gaps vs the reference channel's E_0^CI) --
+   # channel          k         E + E_core          gap  dup  r/t/c
+   0 A1               0       -7.882401932     0.000000       1.0000/0.0000/0.0000
+   1 A1               1       -7.766418475     0.115983       0.0000/1.0000/0.0000
+   2 A1               2       -7.749216187     0.133186       0.0000/1.0000/0.0000
+   3 B2               0       -7.716454011     0.165948       1.0000/0.0000/0.0000
+   4 B1               0       -7.716454011     0.165948       1.0000/0.0000/0.0000
+   5 B1               1       -7.696951988     0.185450       0.0000/1.0000/0.0000
+   6 B2               1       -7.696951988     0.185450       0.0000/1.0000/0.0000
+   7 A1               3       -7.482612400     0.399790       0.0000/1.0000/0.0000
+   8 A1               4       -7.318494520     0.563907       0.0000/1.0000/0.0000
+   9 B2               2       -7.297966922     0.584435       0.0000/1.0000/0.0000
+  10 B1               2       -7.297966922     0.584435       0.0000/1.0000/0.0000
+  11 A2               0       -7.249389104     0.633013       1.0000/0.0000/0.0000
+  12 A2               1       -7.215230496     0.667171       0.0000/1.0000/0.0000
+  13 B2               3       -7.185953855     0.696448       0.0000/1.0000/0.0000
+  14 B1               3       -7.185953855     0.696448       0.0000/1.0000/0.0000
+  15 B1               4       -7.086645046     0.795757       0.0000/1.0000/0.0000
+  16 B2               4       -7.086645046     0.795757       0.0000/1.0000/0.0000
+  17 A2               2       -5.635018060     2.247384       0.0000/1.0000/0.0000
+  18 A2               3       -5.603048408     2.279354       0.0000/1.0000/0.0000
+  19 A2               4       -5.591313188     2.291089       0.0000/1.0000/0.0000
+  * = cone fraction > 0.5 (descriptive, never asserted)
+  dup = degenerate copy of a state another channel also reports (abelian spin channels; see ChannelSpectrum::levels)
+
+nonvacuity: level -7.716454011 from irrep channel `B2` lies BELOW the reference channel's
+highest reported level -7.318494520 — a different total irrep, so no tangent or cone direction
+at the reference could produce it at any budget.
+
+-- exact cross-check (dense enumeration, dim 225) --
+  A1             sector (2,2) dim   69, E0 exact       -7.882401932, worst |E_j^CI − E_j^exact| over 5 levels: 1.76e-13
+  A2             sector (2,2) dim   44, E0 exact       -7.249389104, worst |E_j^CI − E_j^exact| over 5 levels: 2.63e-13
+  B1             sector (2,2) dim   56, E0 exact       -7.716454011, worst |E_j^CI − E_j^exact| over 5 levels: 9.24e-14
+  B2             sector (2,2) dim   56, E0 exact       -7.716454011, worst |E_j^CI − E_j^exact| over 5 levels: 1.07e-13
+  (0.5s)

@@ -1,0 +1,47 @@
+# capture release-0.1
+== rpa_casscf: DMRG-SCF ground state + RPA response on the joint manifold ==
+lih_sto3g: d=6 spatial orbitals, N=4 — sector (2,2); reference M=3, k=4
+meta: e_core = 0.995317638, e_hf = Some(-7.862023860127116), e_fci (TOTAL) = Some(-7.882401932290224)
+exact reference: dim 225, 1.6s; E0 = -8.877719570 (electronic; +e_core = -7.882401932)
+
+energy vs rank (electronic; the TT-only column is the SAME x0 with no orbital step)
+    M             bond totals       E_tt-only         E_joint  closed [Ha]     %FCI  iters  converged
+  x0 at M=2: certified polish 9 it → ‖grad‖ 5.3e-13, certified minimizer; after the trim 0 it → ‖grad‖ 5.6e-13, certified minimizer
+    2  [1, 4, 14, 8, 8, 4, 1]    -8.877679049    -8.877719570      4.05e-5   100.0%      9       true
+  x0 at M=3: certified polish 3 it → ‖grad‖ 8.3e-13, certified minimizer; after the trim 0 it → ‖grad‖ 7.2e-13, certified minimizer
+    3  [1, 4, 15, 8, 8, 4, 1]    -8.877718252    -8.877719570      1.32e-6   100.0%      3       true
+
+joint optimum at M=3: λ = -8.877719570 (total -7.882401932); 3 orbital iters, 2 line-search H rebuilds, terminal ‖gk‖ 7.5e-8 / ‖g_L‖ 7.5e-8 / ‖g_dropped‖ 8.0e-10, TT ‖grad‖ 1.2e-9, u_orth_dev 2.7e-15, σ_min 3.56e-7
+   variational check: λ − E0_exact = +4.23e-13 Ha; total − e_fci(meta) = +2.98e-13 Ha
+   TT-only at the same rank/seed: -8.877718252 — the orbital leg closed 1.319e-6 Ha
+
+orbital redundancy spectrum of N = S − τᵀτ (15 pairs, floor 1e-8): n_eff = 7, kept 7, dropped 0 (mass 3.3e-15)
+   μ = -2.03e-16 -6.94e-18 -3.47e-18 2.13e-19 1.37e-17 1.45e-17 1.46e-15 1.84e-15 4.06e-5 4.07e-5 1.81e-3 1.81e0 1.81e0 2.05e0 2.05e0
+   response space: n_tt 75 + n_orb_kept 7 = 82 modes; orth_error 1.3e-11, σ_min 3.56e-7, ‖z‖ 9.03e-7
+dense oracle: Stable, 82 ω over a 82-dim joint basis, 18.3s
+Davidson (precond=false, block 6, k=4): converged=true in 150 iterations / 307 applies, 25.0s
+
+lowest ω (Hartree / eV) — Davidson vs dense oracle vs exact FCI gaps
+     j     ω (Davidson)     ω (dense)    |diff|      ω (eV)    FCI E_j−E_0    (ω−FCI)
+     0       0.11601071    0.11601071   6.6e-14      3.1568     0.11598346     2.7e-5
+     1       0.13318575    0.13318575   2.0e-15      3.6242     0.13318575    3.3e-11
+     2       0.18574200    0.18574200   3.2e-14      5.0543     0.16594792     2.0e-2
+     3       0.18574316    0.18574316   1.0e-14      5.0543     0.16594792     2.0e-2
+   max |ω_Davidson − ω_dense| over the reported k: 6.56e-14
+   ⚠ the (ω−FCI) column is INDEX-ALIGNED against an untyped exact list: every arm here reads out ONE symmetry channel (the reference's), so a level of a different total irrep occupying slot j makes that entry a misalignment, not a modelling error. step-11 resolves the channel assignment.
+   exact gaps (j = 1..6): 0.11598 0.13319 0.16595 0.16595 0.18545 0.18545
+
+transition moments over 3 properties [synth_diag, synth_rand1, synth_rand2] — SYNTHETIC, not this molecule's dipole (rotated into the joint basis U before use: the JointScfOut basis-identity contract)
+   ⟨x|μ̂|x⟩ = ["-7.848386", "-2.566216", "-1.209962"]; completeness_defect = ["1.1e-15", "1.1e-15", "4.7e-16"]; orth_error 1.3e-11, σ_min 3.56e-7, n_eff 7
+     n             ω      ω (eV)                 |T_n| per component          f_n  cluster
+     0    0.11601071      3.1568     5.842e-14  1.829e-13  7.287e-14   3.2611e-27        -
+     1    0.13318575      3.6242      1.219e-1   4.178e-1   1.681e-1    1.9327e-2        -
+     2    0.18574200      5.0543     4.765e-16   3.919e-1   5.960e-1    6.3001e-2        -
+     3    0.18574316      5.0543     7.828e-14   2.102e-1   1.090e-1    6.9422e-3        -
+   Σ f over all 82 modes = 12.3971 (TRK would give N_e = 4 at full rank in a complete basis — a DIAGNOSTIC here, never an oracle, and meaningless for a synthetic property)
+
+α(0) diagonal (solve): ["2.27286554", "12.65095031", "9.53804241"]
+   α(0) diagonal (SOS from the moments): ["2.27286554", "12.65095031", "9.53804241"]
+   worst |α_solve − α_SOS| / max(1,|α|) = 5.39e-9  (an algebraic identity — the error budget is completeness_defect, orth_error and the solve residual; α symmetry defect 5.7e-8, solves ["26it/2e-9", "32it/9e-9", "32it/9e-9"])
+
+[total 148.2s]

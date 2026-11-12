@@ -1,0 +1,16 @@
+# joint_d2/meta.txt -- written by qntt::integrals::write_fixture_dir; keyed dialect.
+norb            6
+nelec           3
+ms2             1
+isym            1
+e_nuc           0e0
+write_tol       0
+dump_file       D2_ROT.FCIDUMP
+dump_bytes      7597
+dump_lines      257
+parent_fixture  qntt_testkit::joint_d2 (synthetic generic_truncated_tv(6))
+derived_by      examples/fixture/d2_endpoint.rs
+recipe          qntt_testkit::joint_d2: D2_KAPPA_MIX mixed basis, seed 57 rank-1-per-sector start, d2_scf_opts (orb_grad 1e-7, tt_grad_tol 1e-6, Median, rebuild); integrals ROTATED by the accumulated u, so the saved x.tt is the point at u = I
+orb_iters       25
+lambda          -4.73880409438826788e0
+generated_on_arch x86_64

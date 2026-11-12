@@ -1,0 +1,46 @@
+# Doxygen configuration for the qntt C ABI.
+#
+#   bash docs/doxygen.sh          # or: doxygen docs/Doxyfile
+#
+# The header declares its four symbol families through preprocessor macros (one body, four
+# instantiations — exactly as the Rust side does), so macro expansion must be on or Doxygen sees
+# only the macros and none of the 213 functions.
+
+PROJECT_NAME           = "qntt C ABI"
+PROJECT_BRIEF          = "Quantum-number-preserving block-sparse tensor trains — C interface"
+PROJECT_NUMBER         = 0.1.0
+
+INPUT                  = capi/include
+FILE_PATTERNS          = *.h
+RECURSIVE              = NO
+OUTPUT_DIRECTORY       = docs/build/capi
+STRIP_FROM_PATH        = capi/include
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = .
+GENERATE_LATEX         = NO
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+
+# The header is documented with plain `/* ... */` block comments rather than Doxygen markup, so
+# take every comment as documentation and extract everything.
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+JAVADOC_AUTOBRIEF      = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+TYPEDEF_HIDES_STRUCT   = YES
+SORT_MEMBER_DOCS       = NO
+SORT_BRIEF_DOCS        = NO
+
+# Expand the family-declaration macros so each generated function is documented individually.
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+SEARCH_INCLUDES        = NO
+PREDEFINED             = __cplusplus=0
+
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_NO_PARAMDOC       = NO

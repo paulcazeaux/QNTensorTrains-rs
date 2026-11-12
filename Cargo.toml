@@ -1,0 +1,112 @@
+[package]
+name = "qntt"
+version = "0.1.0"
+edition = "2024"
+description = "Quantum-number-preserving block-sparse tensor trains for fermionic many-body systems"
+license = "GPL-3.0-or-later"
+
+[workspace]
+members = ["capi", "exkit", "testkit"]
+
+[profile.dev]
+opt-level = 2
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.profiling]
+inherits = "release"
+debug = 1
+
+[features]
+
+[dependencies]
+faer = "0.24.4"
+num-bigint = "0.4"
+num-complex = "0.4.6"
+num-rational = "0.4"
+num-traits = "0.2"
+rand = "0.10.2"
+rand_distr = "0.6.0"
+rand_xoshiro = "0.8.1"
+rayon = "1.12.0"
+rustc-hash = "2"
+thiserror = "2.0.18"
+
+[dev-dependencies]
+qntt-testkit = { path = "testkit" }
+qntt-exkit = { path = "exkit" }
+qntt = { path = ".", default-features = false }
+
+[[example]]
+name = "step-01"
+path = "examples/tutorial/step_01_first_ground_state.rs"
+
+[[example]]
+name = "step-02"
+path = "examples/tutorial/step_02_ranks_and_convergence.rs"
+
+[[example]]
+name = "step-03"
+path = "examples/tutorial/step_03_reading_an_fcidump.rs"
+
+[[example]]
+name = "step-04"
+path = "examples/tutorial/step_04_hamiltonian_construction.rs"
+
+[[example]]
+name = "step-05"
+path = "examples/tutorial/step_05_mals_and_noise.rs"
+
+[[example]]
+name = "step-06"
+path = "examples/tutorial/step_06_scaling_up.rs"
+
+[[example]]
+name = "step-07"
+path = "examples/tutorial/step_07_spin_adaptation.rs"
+
+[[example]]
+name = "step-08"
+path = "examples/tutorial/step_08_linear_response.rs"
+
+[[example]]
+name = "step-09"
+path = "examples/tutorial/step_09_spin_adapted_response.rs"
+
+[[example]]
+name = "step-10"
+path = "examples/tutorial/step_10_cone_response.rs"
+
+[[example]]
+name = "step-11"
+path = "examples/tutorial/step_11_channel_response.rs"
+
+[[example]]
+name = "step-12"
+path = "examples/tutorial/step_12_joint_manifold.rs"
+
+[[example]]
+name = "step-13"
+path = "examples/tutorial/step_13_casscf_response.rs"
+
+[[example]]
+name = "step-14"
+path = "examples/tutorial/step_14_spin_adapted_casscf.rs"
+
+[[example]]
+name = "step-15"
+path = "examples/tutorial/step_15_dmrg_scf_to_rpa.rs"
+
+[[example]]
+name = "step-16"
+path = "examples/tutorial/step_16_pinvit.rs"
+
+[[example]]
+name = "step-17"
+path = "examples/tutorial/step_17_excited_states.rs"
+
+[[example]]
+name = "step-18"
+path = "examples/tutorial/step_18_sector_response.rs"
+

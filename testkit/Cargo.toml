@@ -1,0 +1,13 @@
+[package]
+name = "qntt-testkit"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+publish = false
+
+[dependencies]
+qntt = { path = "..", default-features = false }
+rand = "0.10.2"
+rand_xoshiro = "0.8.1"
+rand_distr = "0.6.0"
+faer = "0.24.4"

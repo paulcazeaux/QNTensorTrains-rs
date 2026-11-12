@@ -1,0 +1,9 @@
+# capture release-0.1
+fixture        backend             energy (Ha)  conv   iters max_bond_dim  wall (ms)
+--------------------------------------------------------------------------------
+# lih_sto3g: gamma = 15.520  D = [5.000, 12.933]  T = 2.59  min d_i = -0.291
+#   spec(A) = [7.2994e-1, 1.6133e0]  c_raw 0.3770 -> c 0.4704  (settled: false)  max exponent beta*|min d| = 1.6 (e^x overflows f64 near 709)
+lih_sto3g      deterministic       -7.88240193   yes      72        16     7688.8
+# h2o_sto3g: gamma = 106.498  D = [5.000, 61.382]  T = 12.28  min d_i = -19.318
+#   spec(A) = [1.0731e0, 5.4869e0]  c_raw 0.6728 -> c 0.7219  (settled: false)  max exponent beta*|min d| = 105.0 (e^x overflows f64 near 709)
+h2o_sto3g      deterministic      -75.01985480   yes      42        29    60465.2

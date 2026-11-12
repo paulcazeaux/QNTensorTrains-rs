@@ -1,0 +1,22 @@
+# capture release-0.1
+== N2/cc-pVDZ (REAL integrals) SU(2) diagnostics — mode=matvec ==
+KNOBS: QNTT_COREOPS_BLOCKS=2 QNTT_COREOPS_WORK=1048576 QNTT_COREOPS_TASK_WORK=16384 QNTT_SPLIT_TARGET=32 QNTT_SPLIT_MIN_WIDTH=8 QNTT_GEMM_PAR_MIN_WORK=2097152 QNTT_GEMM_PAR_WIDTH=4
+load integrals                   61.217 ms  (d=28, nelec=14, singlet twoS=0)
+Su2SparseHamiltonian::new     29960.258 ms
+RayleighQuotient(H,HF)           38.579 ms  = -132.0844109291  (+e_nuc=-108.94937788, e_hf=-108.94937788)
+  ✓ energy check passed (SU(2) HF matches abelian to 1e-6)
+
+controlled state: per-sector rank R=24
+build+orthogonalize state        42.709 ms
+  per-sector block ranks: 708 nonzero sectors, mean 19.3, max 24
+    =1          70  ( 9.9%)
+    2-4         22  ( 3.1%)
+    5-16        80  (11.3%)
+    17-63      536  (75.7%)
+    64-127       0  ( 0.0%)
+    128+         0  ( 0.0%)
+    Σrank³ fraction in ≥64 blocks: 0.0%
+
+env sweep right_to_left        3795.833 ms  (d-1 environment steps, threaded)
+round(x)                        153.463 ms   [708 sectors]
+als 1 sweep                   78925.342 ms  λ=-132.400369
